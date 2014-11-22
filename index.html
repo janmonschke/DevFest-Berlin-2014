@@ -32,6 +32,11 @@
 	</head>
 
 	<body>
+  <script type="text/javascript">
+    // create a global context
+    window.context = new AudioContext();
+  </script>
+
 		<div id="source-info"></div>
 
 		<div class="reveal">
@@ -41,7 +46,7 @@
 				<section>
 					<h1>Using the web for music production and live performances</h1>
 					<hr />
-					<h3>JSConf.eu 2014</h3>
+					<h3>DevFest Berlin 2014</h3>
 
 				</section>
 
@@ -71,33 +76,13 @@
 
 				<section>
 					<h2>Audio on the Web</h2>
-
-          <!-- Yes, using a table layout here for a meta joke -->
-          <table style="margin: 0 auto;">
-            <tr>
-              <td>
-                <ul class="spaced">
-                  <li class="fragment"><code>bgsound</code></li>
-                  <li class="fragment"><code>object, embed</code></li>
-                  <li class="fragment"><code>< audio /></code></li>
-                  <li class="fragment"><code>Audio Data API</code></li>
-                  <li class="fragment"><code>Web Audio API</code> </li>
-                </ul>
-
-              </td>
-              <td style="vertical-align: top;">
-                <ul class="spaced" style="list-style-type: none; color: #acaaca">
-                  <li class="fragment">Frames</li>
-                  <li class="fragment">Table Layout</li>
-                  <li class="fragment">Float Layout</li>
-                  <li class="fragment">Flexbox v1</li>
-                  <li class="fragment">Flexbox</li>
-
-                </ul>
-              </td>
-            </tr>
-          </table>
-
+          <ul class="spaced">
+            <li class="fragment"><code>bgsound</code></li>
+            <li class="fragment"><code>object, embed</code></li>
+            <li class="fragment"><code>< audio /></code></li>
+            <li class="fragment"><code>Audio Data API</code></li>
+            <li class="fragment"><code>Web Audio API</code> </li>
+          </ul>
 
 
 					<aside class="notes">
@@ -130,6 +115,96 @@
 				</section>
 
         <section>
+          <h2>Web Audio 101</h2>
+
+          <h4>Everything is created from a context object</h4>
+
+          <pre><code>var context = new AudioContext();
+
+var oscillator = context.createOscillator();
+
+oscillator.connect(context.destination);
+
+oscillator.start();</code></pre>
+
+          <div class="oscillator-demo">
+            <button id="oscillator-demo-start">Start</button>
+            <button id="oscillator-demo-stop">Stop</button>
+            <input type="range" id="oscillator-demo-range" min="1" max="2000" value="440"></input>
+          </div>
+
+<script type="text/javascript">
+var oscillator = context.createOscillator();
+oscillator.connect(context.destination);
+
+document.getElementById('oscillator-demo-start').addEventListener('click', function(){
+  debugger
+  oscillator.start();
+});
+
+document.getElementById('oscillator-demo-stop').addEventListener('click', function(){
+  oscillator.stop();
+});
+
+document.getElementById('oscillator-demo-range').addEventListener('change', function(){
+  oscillator.frequency.value = parseInt(this.value);
+});
+
+</script>
+
+        </section>
+
+        <section>
+          <h2>Web Audio 101</h2>
+
+          <h4>Timing is everything</h4>
+
+          <pre><code>var audio = context.createBufferSource();
+
+// load a buffer via xhr
+
+audio.buffer = xhrBuffer;
+
+audio.connect(context.destination);
+
+// play with delay of one second
+audio.start(1);
+</code></pre>
+
+        <div class="buffer-demo">
+          <button id="buffer-demo-start">Start (1s delay)</button>
+          <button id="buffer-demo-stop">Stop</button>
+        </div>
+
+<script type="text/javascript">
+  var jzBuffer = null;
+
+  document.getElementById('buffer-demo-start').addEventListener('click', function(){
+    jzBuffer = playBuffer('jz', 1);
+  });
+
+  document.getElementById('buffer-demo-stop').addEventListener('click', function(){
+    jzBuffer.stop();
+  });
+
+</script>
+
+        </section>
+
+        <section>
+          <h2>Still confused?</h2>
+
+          <h2 class="fragment">Let's visualize the thing!</h2>
+
+          <p><a href="http://soledadpenades.com/files/t/berlin-webaudio-hackday-2014/examples/oscillator_wave_type/" target="_blank" class="fragment">Visualize different wave types</a></p>
+
+          <p><a href="http://soledadpenades.com/files/t/berlin-webaudio-hackday-2014/examples/spooky_lfos/" target="_blank" class="fragment">More advanced usage of Oscillators</a></p>
+
+          <p class="fragment"><a href="http://soledadpenades.com">Made by Soledad Penadés</a></p>
+
+        </section>
+
+        <section>
           <blockquote style="font-size: 1.8em; padding: .5em; line-height: 1em;">
             "Building a collaborative music production environment using emerging web standards"
           </blockquote>
@@ -138,16 +213,6 @@
 				<section>
 					<section>
 						<h2>Analyzing audio editors</h2>
-
-						<ul class="spaced">
-							<li class="fragment">years of development and best practices</li>
-							<li class="fragment">common interface patterns</li>
-							<li class="fragment">minimum feature sets</li>
-						</ul>
-
-						<aside class="notes">
-
-						</aside>
 					</section>
 					<section>
 						<h2>Garageband</h2>
@@ -163,16 +228,6 @@
 						<h2>Ableton Live</h2>
 
 						<img src="images/ableton_live.png" data-source="http://jdmusic.de/?p=165">
-
-						<aside class="notes">
-
-						</aside>
-					</section>
-
-					<section>
-						<h2>Reason</h2>
-
-						<img src="images/reason-screen.jpg" data-source="http://i1-mac.softpedia-static.com/screenshots/Reason_7.jpg">
 
 						<aside class="notes">
 
@@ -221,7 +276,7 @@
             <ul class="spaced">
               <li>Remote band brainstorming</li>
               <li class="fragment">Auto-save and auto-backup</li>
-              <li class="fragment">sadly not offline...(sorry, Team Hoodie)</li>
+              <li class="fragment">sadly not offline...</li>
             </ul>
           </section>
 
@@ -301,10 +356,6 @@
         </section>
 
         <section>
-          <img src="images/the-semicolons.png" />
-        </section>
-
-        <section>
 
           <img src="images/jsconf.jpg" />
 
@@ -324,7 +375,6 @@
 					<h1>THX so much for your attention!</h1>
 
 					<p><a href="https://soundcloud.com/the-semicolons" target="_blank">Check out <span class="highlight">The Semicolons</span></a></p>
-					<p><a href="http://www.njs.lichtbildbude.de/nijusan/" target="_blank">Check out <span class="highlight">my brothers band</span></a></p>
           <p><a href="https://soundcloud.com/theglitchmob" target="_blank">Check out <span class="highlight">The Glitch Mob</span></a></p>
           <p><a href="https://soundcloud.com/brokenhaze" target="_blank">Check out <span class="highlight">Broken Haze</span></a></p>
 
@@ -363,7 +413,6 @@
 				]
 			});
 
-			var context = new webkitAudioContext();
 			var source = null;
 
 			window.buffers = {};
@@ -380,7 +429,7 @@
 		    xhr.send();
 			};
 
-			// loadBuffer('mixer/songs/rick2.mp3', 'rick');
+      loadBuffer('jz-demo/audio/dirt-off-your-should-beat.mp3', 'jz');
 			// loadBuffer('mixer/songs/wearetherejects-2.mp3', 'rejects');
 			// loadBuffer('slash.mp3', 'slash');
 			// loadBuffer('dot.mp3', 'dot');
@@ -389,10 +438,13 @@
 
 			var playBuffer = function(bufferName, when, offset, duration){
 				if(source) source.stop(0);
+        if(offset == undefined) offset = 0;
+        if(duration == undefined) duration = buffers[bufferName].duration
 				source = context.createBufferSource();
 		    source.buffer = buffers[bufferName];
 		    source.connect(context.destination);
 		    source.start(when + context.currentTime, offset, duration);
+        return source;
 			};
 
 			// document.getElementById('playWith2sdelay').addEventListener('click', function(){
